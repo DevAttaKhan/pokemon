@@ -1,17 +1,21 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetPokemonByNameQuery } from "../Services/pokemon";
 import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
-import Loader from "./Loader/Loader";
+
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const PokemonCard = ({ type, wieght, hieght, name }) => {
+const PokemonCard = ({ name }) => {
+  const navigate = useNavigate();
   const { data, error, isLoading, isSuccess } = useGetPokemonByNameQuery(name);
+
+  const sendToDetailsPage = () => {};
 
   return (
     <>
       {isLoading && <Skeleton count={5} />}
-
+      {error && <ErrorMessage />}
       {isSuccess && (
         <div className=" rounded-lg shadow bg-white">
           <div className="flex items-center  justify-between p-5">
@@ -39,10 +43,16 @@ const PokemonCard = ({ type, wieght, hieght, name }) => {
             </div>
           </div>
           <div className="flex justify-center border-t-2">
-            <button className="p-5 text-center flex-1 border-r hover:bg-amber-300">
+            <button
+              onClick={() => navigate(`/details/${name}`, { state: data })}
+              className="p-5 text-center flex-1 border-r hover:bg-amber-300"
+            >
               Details
             </button>
-            <button className="p-5 text-center flex-1  hover:bg-amber-300">
+            <button
+              onClick={sendToDetailsPage}
+              className="p-5 text-center flex-1  hover:bg-amber-300"
+            >
               Add to Favorite
             </button>
           </div>

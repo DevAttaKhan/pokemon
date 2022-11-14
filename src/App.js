@@ -1,4 +1,7 @@
 import MainLayout from "./Layout/MainLayout";
+
+import DetailsPage from "./Pages/DetailsPage";
+
 import { Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
 
@@ -7,7 +10,7 @@ function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/favorites" element={<h1>helsdfsdflo</h1>} />
+        <Route path="/details/:id" element={<DetailsPage />} />
       </Route>
     </Routes>
   );

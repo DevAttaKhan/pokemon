@@ -29,7 +29,7 @@ const PokemonGrid = () => {
           ))}
       </div>
 
-      <div className="text-center mt-9">
+      <div className="text-center mt-9 mb-8">
         <ReactPaginate
           containerClassName="isolate inline-flex -space-x-px  shadow-sm "
           pageLinkClassName="relative inline-flex items-center  border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
