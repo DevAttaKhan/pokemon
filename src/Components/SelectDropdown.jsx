@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import FilterIcon from "../Assets/icons/FilterIcon";
 
-const SelectDropDown = ({ list }) => {
+const SelectDropDown = ({ list, selectedValue, setSelectedValue, status }) => {
   const [selectOpen, setSelectOpen] = useState(false);
-  const [selectValue, setSelectValue] = useState("list");
+
   const selectRef = useRef();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const SelectDropDown = ({ list }) => {
   };
 
   const handleSelect = (cat) => {
-    setSelectValue(cat);
+    setSelectedValue(cat);
     setSelectOpen(false);
   };
 
@@ -36,11 +36,20 @@ const SelectDropDown = ({ list }) => {
         <span className="text-cyan-300">
           <FilterIcon />
         </span>
-        <span>Generations</span>
+        <span>{selectedValue}</span>
       </button>
       <div className={selectOpen ? "block" : "hidden"}>
-        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 absolute">
-          <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8"></div>
+        <div className="overflow-hidden w-44 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 absolute">
+          {status &&
+            list.map((el) => (
+              <div
+                key={el}
+                onClick={() => handleSelect(el)}
+                className="bg-white p-5 hover:bg-gray-200 cursor-pointer"
+              >
+                {el}
+              </div>
+            ))}
         </div>
       </div>
     </div>

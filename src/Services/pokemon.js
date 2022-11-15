@@ -13,7 +13,24 @@ export const pokemonApi = createApi({
     getPokemonByName: builder.query({
       query: (name) => `pokemon/${name}`,
     }),
+    getPokemonBySpecies: builder.query({
+      query: (name) => `pokemon-species/${name}`,
+    }),
+    getPokemonGenerations: builder.query({
+      query: () => "generation/",
+      transformResponse: (response) => response.results.map((el) => el.name),
+    }),
+    getPokemonGenerationByName: builder.query({
+      query: (name) => `generation/${name}`,
+      transformResponse: (response) => response.pokemon_species,
+    }),
   }),
 });
 
-export const { useGetPokemonByNameQuery, useGetPokemonsQuery } = pokemonApi;
+export const {
+  useGetPokemonByNameQuery,
+  useGetPokemonsQuery,
+  useGetPokemonBySpeciesQuery,
+  useGetPokemonGenerationsQuery,
+  useGetPokemonGenerationByNameQuery,
+} = pokemonApi;

@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import PokemonCard from "./PokemonCard";
 import ReactPaginate from "react-paginate";
-import { useGetPokemonsQuery } from "../Services/pokemon";
+import {
+  useGetPokemonsQuery,
+  useGetPokemonGenerationByNameQuery,
+} from "../Services/pokemon";
 import CheveronLeftIcon from "../Assets/icons/CheveronLeftIcon";
 import ChevronRightIcon from "../Assets/icons/ChevronRightIcon";
 import Loader from "./Loader/Loader";
 import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
-
+import { useSelector } from "react-redux";
 const PokemonGrid = () => {
+  const state = useSelector((state) => state);
   const [page, setPage] = useState(1);
   const { data, error, isLoading, isSuccess } = useGetPokemonsQuery(page);
-
+  const { data: gen } = useGetPokemonGenerationByNameQuery();
+  console.log(gen);
   const handlePageClick = (e) => {
     const selectedPage = e.selected + 1;
     const offset = 20 * selectedPage;
