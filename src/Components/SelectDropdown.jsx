@@ -28,15 +28,16 @@ const SelectDropDown = ({ list, selectedValue, setSelectedValue, status }) => {
     setSelectOpen(false);
   };
 
-  const toggleMenu = selectOpen ? "show" : "";
-
   return (
     <div className="relative" ref={selectRef}>
-      <button className="flex items-center space-x-1" onClick={handleClick}>
-        <span className="text-cyan-300">
+      <button
+        className="flex items-center space-x-1 px-4 py-2 shadow rounded-lg text-base font-medium bg-amber-400 text-gray-700 hover:bg-amber-300"
+        onClick={handleClick}
+      >
+        <span className="text-indigo-700">
           <FilterIcon />
         </span>
-        <span>{selectedValue}</span>
+        <span>{selectedValue ? selectedValue : "Select generation"}</span>
       </button>
       <div className={selectOpen ? "block" : "hidden"}>
         <div className="overflow-hidden w-44 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 absolute">

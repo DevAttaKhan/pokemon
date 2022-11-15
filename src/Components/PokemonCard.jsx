@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetPokemonByNameQuery } from "../Services/pokemon";
-import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
+import ErrorMessage from "../Assets/media/somethi-went-wrong.svg";
 
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -15,7 +15,11 @@ const PokemonCard = ({ name }) => {
   return (
     <>
       {isLoading && <Skeleton count={5} />}
-      {error && <ErrorMessage />}
+      {error && (
+        <div className=" rounded-lg shadow bg-white">
+          <img src={ErrorMessage} alt="error" className="w-full h-full" />
+        </div>
+      )}
       {isSuccess && (
         <div className=" rounded-lg shadow bg-white">
           <div className="flex items-center  justify-between p-5">

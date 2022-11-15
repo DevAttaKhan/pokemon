@@ -22,7 +22,6 @@ export const pokemonApi = createApi({
     }),
     getPokemonGenerationByName: builder.query({
       query: (name) => `generation/${name}`,
-      transformResponse: (response) => response.pokemon_species,
     }),
   }),
 });
