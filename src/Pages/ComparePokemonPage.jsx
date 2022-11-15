@@ -16,31 +16,20 @@ const ComparePokemonPage = () => {
   const [pokemonLeftDetails, setPokemonLeftDetails] = useState([]);
   const [pokemonRightDetails, setPokemonRightDetails] = useState([]);
 
-  const {
-    data: pokemonLeft,
-    isFetching: leftFetching,
-    isSuccess: leftSuccess,
-  } = useGetPokemonByNameQuery(pokemonQueryLeft, {
-    skip: pokemonQueryLeftSkip,
-  });
+  const { data: pokemonLeft, isFetching: leftFetching } =
+    useGetPokemonByNameQuery(pokemonQueryLeft, {
+      skip: pokemonQueryLeftSkip,
+    });
 
-  const {
-    data: pokeSpeciesLeft,
-    error,
-    isSuccess,
-    isLoading,
-    isFetching: specieLeftFetching,
-  } = useGetPokemonBySpeciesQuery(pokemonLeftDetails?.name, {
-    skip: pokemonLeftDetails.length < 1,
-  });
+  const { data: pokeSpeciesLeft, isFetching: specieLeftFetching } =
+    useGetPokemonBySpeciesQuery(pokemonLeftDetails?.name, {
+      skip: pokemonLeftDetails.length < 1,
+    });
 
-  const {
-    data: pokemonRight,
-    isFetching: rightFetching,
-    isSuccess: rightSuccess,
-  } = useGetPokemonByNameQuery(pokemonQueryRight, {
-    skip: pokemonQueryRightSkip,
-  });
+  const { data: pokemonRight, isFetching: rightFetching } =
+    useGetPokemonByNameQuery(pokemonQueryRight, {
+      skip: pokemonQueryRightSkip,
+    });
 
   const { data: pokeSpeciesRight, isFetching: specieRightFetching } =
     useGetPokemonBySpeciesQuery(pokemonRightDetails?.name, {
