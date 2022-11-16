@@ -50,7 +50,6 @@ const ComparePokemonPage = () => {
 
   useEffect(() => {
     if (!leftFetching && !specieLeftFetching && pokemonLeft) {
-      console.log(pokeSpeciesLeft);
       const pokemonDetailsCopy = {
         img: pokemonLeft?.sprites?.front_shiny,
         name: pokemonLeft?.name,
@@ -73,7 +72,6 @@ const ComparePokemonPage = () => {
 
   useEffect(() => {
     if (!rightFetching && !specieRightFetching && pokemonRight) {
-      console.log(pokeSpeciesRight);
       const pokemonDetailsCopy = {
         img: pokemonRight?.sprites?.front_shiny,
         name: pokemonRight?.name,

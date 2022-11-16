@@ -11,8 +11,6 @@ const DetailsPage = () => {
   const { data, error, isSuccess, isLoading, isFetching } =
     useGetPokemonBySpeciesQuery(state.name);
 
-  console.log(data);
-
   useEffect(() => {
     if (!isFetching && data) {
       const pokemonDetailsCopy = {

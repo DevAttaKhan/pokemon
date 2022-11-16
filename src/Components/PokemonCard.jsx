@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetPokemonByNameQuery } from "../Services/pokemon";
 import ErrorMessage from "../Assets/media/somethi-went-wrong.svg";
@@ -7,19 +7,55 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useLocalStorage from "react-use-localstorage";
 
-const PokemonCard = ({ name }) => {
-  const [favoritePokemon, setFavoritePokemon] = useLocalStorage(
-    "favorites",
-    ""
-  );
+const PokemonCard = ({ name, setIsRemoved }) => {
   const navigate = useNavigate();
+  const [userFavs, setUserFavs] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { data, error, isLoading, isSuccess } = useGetPokemonByNameQuery(name);
 
-  const handleAddToFavorites = () => {
-    console.log(favoritePokemon);
-    const item = { favoritePokemon };
-    item[name] = name;
-    setFavoritePokemon(JSON.stringify(item));
+  useEffect(() => {
+    const favorites = localStorage.getItem("favorites");
+    if (favorites) {
+      const parsedFavs = JSON.parse(favorites);
+      setUserFavs(parsedFavs.fav);
+      setIsFavorite(parsedFavs.fav.includes(name));
+    }
+  }, []);
+
+  const addFavoriteToLocalStorate = () => {
+    const favorites = localStorage.getItem("favorites");
+    if (favorites) {
+      const parsedFavs = JSON.parse(favorites);
+      if (parsedFavs.fav.includes(name)) return;
+      parsedFavs.fav = [...parsedFavs.fav, name];
+      setIsFavorite(parsedFavs.fav.includes(name));
+      localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+    }
+  };
+
+  const removeFavoriesFromLoacalStorage = () => {
+    const favorites = localStorage.getItem("favorites");
+    const parsedFavs = JSON.parse(favorites);
+    parsedFavs.fav = parsedFavs.fav.filter((el) => el !== name);
+    setIsFavorite(parsedFavs.fav.includes(name));
+    localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+    setIsRemoved(name);
+  };
+
+  const handleAddRemoveFavorites = () => {
+    if (!isFavorite) {
+      addFavoriteToLocalStorate();
+    } else {
+      removeFavoriesFromLoacalStorage();
+    }
+  };
+
+  const handleRomoveFavorites = () => {
+    const filterdFavs = userFavs.filter((el) => el !== name);
+    setUserFavs(filterdFavs);
+    setIsFavorite(filterdFavs.includes(name));
+    // setIsRemoved(name);
+    localStorage.setItem("favorites", JSON.stringify({ fav: filterdFavs }));
   };
 
   return (
@@ -69,10 +105,12 @@ const PokemonCard = ({ name }) => {
             </button>
 
             <button
-              onClick={handleAddToFavorites}
-              className="p-5 text-center flex-1  hover:bg-amber-300"
+              onClick={handleAddRemoveFavorites}
+              className={`p-5 text-center flex-1 hover:bg-amber-300 ${
+                isFavorite ? "bg-amber-300" : ""
+              }`}
             >
-              Add to Favorite
+              {isFavorite ? "Remove From Favories" : "Add to Favorite"}
             </button>
           </div>
         </div>

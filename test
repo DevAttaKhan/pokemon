@@ -1,0 +1,20 @@
+  if (!isFavorite) {
+      if (favorites) {
+        const parsedFavs = JSON.parse(favorites);
+        if (parsedFavs.fav.includes(name)) return;
+        parsedFavs.fav = [...parsedFavs.fav, name];
+        setIsFavorite(parsedFavs.fav.includes(name));
+        localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+      } else {
+        const obj = {
+          fav: [name],
+        };
+        localStorage.setItem("favorites", JSON.stringify(obj));
+      }
+    } else {
+      const parsedFavs = JSON.parse(favorites);
+      setUserFavs(parsedFavs.fav);
+      setIsFavorite(parsedFavs.fav.includes(name));
+      // setIsRemoved(name);
+      localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+    }
