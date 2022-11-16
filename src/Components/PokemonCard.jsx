@@ -102,7 +102,7 @@ const PokemonCard = ({ name, setIsRemoved }) => {
                 isFavorite ? "bg-amber-300" : ""
               }`}
             >
-              {isFavorite ? "Remove From Favories" : "Add to Favorite"}
+              {isFavorite ? "Remove From Favorites" : "Add to Favorite"}
             </button>
           </div>
         </div>

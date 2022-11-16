@@ -72,7 +72,7 @@ const PokemonGrid = () => {
             />
           </div>
         </div>
-        {isLoading && !isFetching && <Loader />}
+        {isLoading && isFetching && <Loader />}
         {error && <ErrorMessage />}
 
         {isSuccess &&
@@ -100,7 +100,7 @@ const PokemonGrid = () => {
           pageRangeDisplayed={5}
           pageCount={Math.ceil(data?.count / 20) || fCount || 1}
           previousLabel={<CheveronLeftIcon />}
-          activeLinkClassName="text-white bg-indigo-700"
+          activeLinkClassName="text-white bg-amber-300"
           renderOnZeroPageCount={null}
         />
       </div>

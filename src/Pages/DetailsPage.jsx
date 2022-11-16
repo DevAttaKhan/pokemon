@@ -4,10 +4,11 @@ import { useGetPokemonBySpeciesQuery } from "../Services/pokemon";
 import { toKilograms, toCentimeters } from "../utils";
 import PokemonRenderDetails from "../Components/PokemonRenderDetails";
 import Loader from "../Components/Loader/Loader";
+import errormsg from "../Assets/media/somethi-went-wrong.svg";
 const DetailsPage = () => {
   const [pokemonDetails, setPokemoeDetails] = useState();
   const { state } = useLocation();
-  const { data, isSuccess, isLoading, isFetching } =
+  const { data, error, isSuccess, isLoading, isFetching } =
     useGetPokemonBySpeciesQuery(state.name);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ const DetailsPage = () => {
     <>
       <div className="details container mx-auto flex flex-col items-center py-11">
         {isLoading && <Loader />}
+        {error && <img src={errormsg} />}
         {isSuccess && <PokemonRenderDetails {...pokemonDetails} />}
       </div>
     </>
