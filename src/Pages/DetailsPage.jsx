@@ -37,7 +37,7 @@ const DetailsPage = () => {
     <>
       <div className="details container mx-auto flex flex-col items-center py-11">
         {isLoading && <Loader />}
-        {error && <img src={errormsg} />}
+        {error && <img src={errormsg} alt="error message" />}
         {isSuccess && <PokemonRenderDetails {...pokemonDetails} />}
       </div>
     </>
