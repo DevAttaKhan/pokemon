@@ -3,10 +3,16 @@ import PokemonCard from "./PokemonCard";
 const FavoritesPokemonGrid = () => {
   const [favoritesPokemon, setFavoritesPokemon] = useState(null);
   const [isRemoved, setIsRemoved] = useState("");
+  const [isEmpty, setIsEmpty] = useState(true);
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites"));
-    setFavoritesPokemon(favorites.fav);
+    if (favorites) {
+      setFavoritesPokemon(favorites.fav);
+      setIsEmpty(false);
+    } else {
+      setIsEmpty(true);
+    }
   }, [isRemoved]);
 
   return (
@@ -17,9 +23,12 @@ const FavoritesPokemonGrid = () => {
         </h3>
       </div>
 
-      {favoritesPokemon?.map((el) => (
-        <PokemonCard key={el} name={el} setIsRemoved={setIsRemoved} />
-      ))}
+      {isEmpty && <h2>No favorites here</h2>}
+
+      {!isEmpty &&
+        favoritesPokemon?.map((el) => (
+          <PokemonCard key={el} name={el} setIsRemoved={setIsRemoved} />
+        ))}
     </div>
   );
 };

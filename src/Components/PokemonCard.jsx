@@ -27,6 +27,9 @@ const PokemonCard = ({ name, setIsRemoved }) => {
       parsedFavs.fav = [...parsedFavs.fav, name];
       setIsFavorite(parsedFavs.fav.includes(name));
       localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+    } else {
+      setIsFavorite(true);
+      localStorage.setItem("favorites", JSON.stringify({ fav: [name] }));
     }
   };
 

@@ -38,13 +38,13 @@ const ComparePokemonPage = () => {
 
   const handleSubminLeft = (e) => {
     e.preventDefault();
-    setPokemonQueryLeft(e.target[0].value);
+    setPokemonQueryLeft(e.target[0].value.toLowerCase());
     setPokemonQueryLeftSkip(false);
   };
 
   const handleSubmitRight = (e) => {
     e.preventDefault();
-    setPokemonQueryRight(e.target[0].value);
+    setPokemonQueryRight(e.target[0].value.toLowerCase());
     setPokemonQueryRightSkip(false);
   };
 
