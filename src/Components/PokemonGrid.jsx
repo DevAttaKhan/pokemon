@@ -15,10 +15,9 @@ import SelectDropdown from "./SelectDropdown";
 const PokemonGrid = () => {
   const [generation, setGeneration] = useState(null);
   const [fetchedRecsByGeneration, setFetchedRecsByGeneration] = useState([]);
-  const [fPges, setFPges] = useState([]);
+  const [generationPages, setGenerationPages] = useState([]);
   const [fCount, setFCount] = useState(1);
   const [page, setPage] = useState(1);
-  const [currenPage, setCurrentPage] = useState(1);
 
   const { data: genList, isSuccess: genSuccess } =
     useGetPokemonGenerationsQuery();
@@ -38,7 +37,7 @@ const PokemonGrid = () => {
   useEffect(() => {
     const limit = 20;
     const startIdex = (page - 1) * limit;
-    setFPges(fetchedRecsByGeneration.slice(startIdex, page * limit));
+    setGenerationPages(fetchedRecsByGeneration.slice(startIdex, page * limit));
   }, [fetchedRecsByGeneration, page]);
 
   const handlePageClick = (e) => {
@@ -83,7 +82,9 @@ const PokemonGrid = () => {
         {isSuccess &&
           !isFetching &&
           generation &&
-          fPges.map((el) => <PokemonCard key={el.name} name={el.name} />)}
+          generationPages.map((el) => (
+            <PokemonCard key={el.name} name={el.name} />
+          ))}
       </div>
 
       <div className="text-center mt-9 mb-8">

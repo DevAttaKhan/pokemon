@@ -5,11 +5,9 @@ import ErrorMessage from "../Assets/media/somethi-went-wrong.svg";
 import { toKilograms, toCentimeters } from "../utils";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import useLocalStorage from "react-use-localstorage";
 
 const PokemonCard = ({ name, setIsRemoved }) => {
   const navigate = useNavigate();
-  const [userFavs, setUserFavs] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const { data, error, isLoading, isSuccess } = useGetPokemonByNameQuery(name);
 
@@ -17,10 +15,9 @@ const PokemonCard = ({ name, setIsRemoved }) => {
     const favorites = localStorage.getItem("favorites");
     if (favorites) {
       const parsedFavs = JSON.parse(favorites);
-      setUserFavs(parsedFavs.fav);
       setIsFavorite(parsedFavs.fav.includes(name));
     }
-  }, []);
+  }, [name]);
 
   const addFavoriteToLocalStorate = () => {
     const favorites = localStorage.getItem("favorites");
@@ -48,14 +45,6 @@ const PokemonCard = ({ name, setIsRemoved }) => {
     } else {
       removeFavoriesFromLoacalStorage();
     }
-  };
-
-  const handleRomoveFavorites = () => {
-    const filterdFavs = userFavs.filter((el) => el !== name);
-    setUserFavs(filterdFavs);
-    setIsFavorite(filterdFavs.includes(name));
-    // setIsRemoved(name);
-    localStorage.setItem("favorites", JSON.stringify({ fav: filterdFavs }));
   };
 
   return (

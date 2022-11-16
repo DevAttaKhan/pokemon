@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useGetPokemonBySpeciesQuery } from "../Services/pokemon";
-import RenderValues from "../Components/RenderValues";
 import { toKilograms, toCentimeters } from "../utils";
 import PokemonRenderDetails from "../Components/PokemonRenderDetails";
 import Loader from "../Components/Loader/Loader";
 const DetailsPage = () => {
   const [pokemonDetails, setPokemoeDetails] = useState();
   const { state } = useLocation();
-  const { data, error, isSuccess, isLoading, isFetching } =
+  const { data, isSuccess, isLoading, isFetching } =
     useGetPokemonBySpeciesQuery(state.name);
 
   useEffect(() => {

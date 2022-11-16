@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import StarIcon from "../Assets/icons/StarIcon";
@@ -11,9 +11,9 @@ const Header = () => {
       <div className="mx-auto container px-4 sm:px-6">
         <div className="flex items-center justify-between  py-6 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
-            <a href="/">
+            <Link to="/">
               <img className="h-8 w-auto sm:h-10" src={logo} alt="" />
-            </a>
+            </Link>
           </div>
 
           <div className="items-center justify-end md:flex md:flex-1 lg:w-0">
