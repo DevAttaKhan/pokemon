@@ -59,7 +59,7 @@ const PokemonCard = ({ name, setIsRemoved }) => {
         </div>
       )}
       {isSuccess && (
-        <div className=" rounded-lg shadow bg-white">
+        <div className=" overflow-hidden rounded-lg shadow bg-white font-medium">
           <div className="flex items-center  justify-between p-5">
             <div>
               <h4 className="text-gray-900 text-xl capitalize">{data.name}</h4>
@@ -91,14 +91,14 @@ const PokemonCard = ({ name, setIsRemoved }) => {
           <div className="flex justify-center border-t-2">
             <button
               onClick={() => navigate(`/details/${name}`, { state: data })}
-              className="p-5 text-center flex-1 border-r hover:bg-amber-300"
+              className="px-2 py-5 text-center flex-1 border-r hover:bg-amber-300"
             >
               Details
             </button>
 
             <button
               onClick={handleAddRemoveFavorites}
-              className={`p-5 text-center flex-1 hover:bg-amber-300 ${
+              className={`px-2 py-5 text-center flex-1 hover:bg-amber-300 ${
                 isFavorite ? "bg-amber-300" : ""
               }`}
             >
