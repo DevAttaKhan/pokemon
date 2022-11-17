@@ -7,7 +7,9 @@ export const pokemonApi = createApi({
   endpoints: (builder) => ({
     getPokemons: builder.query({
       query: (page) => {
-        return page > 1 ? `pokemon/?offset=${page}&limit=20` : "pokemon/";
+        return page > 0
+          ? `pokemon/?offset=${page}&limit=3`
+          : "pokemon/?offset=0&limit=3`";
       },
     }),
     getPokemonByName: builder.query({

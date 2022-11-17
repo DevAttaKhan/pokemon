@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { TailSpin } from "react-loader-spinner";
 import PokemonCard from "./PokemonCard";
 import ReactPaginate from "react-paginate";
 import {
@@ -6,103 +7,176 @@ import {
   useGetPokemonGenerationByNameQuery,
   useGetPokemonGenerationsQuery,
 } from "../Services/pokemon";
-import CheveronLeftIcon from "../Assets/icons/CheveronLeftIcon";
-import ChevronRightIcon from "../Assets/icons/ChevronRightIcon";
-import Loader from "./Loader/Loader";
 import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
 import SelectDropdown from "./SelectDropdown";
 
 const PokemonGrid = () => {
+  // const isFilterClear = useRef(false);
   const [generation, setGeneration] = useState(null);
   const [fetchedRecsByGeneration, setFetchedRecsByGeneration] = useState([]);
-  const [generationPages, setGenerationPages] = useState([]);
-  const [fCount, setFCount] = useState(1);
-  const [page, setPage] = useState(1);
+  const [initialGenerationRender, setInitialGenerationRender] = useState(true);
+  const [isFilterClear, setIsFilterClear] = useState(false);
+  const [page, setPage] = useState(0);
+  const [list, setList] = useState([]);
 
   const { data: genList, isSuccess: genSuccess } =
     useGetPokemonGenerationsQuery();
 
-  const { data, error, isLoading, isSuccess, isFetching } = (
-    generation ? useGetPokemonGenerationByNameQuery : useGetPokemonsQuery
-  )(generation ? generation : page);
+  // const { data, error, isLoading, isSuccess, isFetching } = (
+  //   generation ? useGetPokemonGenerationByNameQuery : useGetPokemonsQuery
+  // )(generation ? generation : page);
+
+  const {
+    data: generationQueryData,
+    error: generationQueryError,
+    isLoading: generationQueryLoading,
+    isSuccess: generationQuerySuccess,
+    isFetching: generationQueryFetching,
+  } = useGetPokemonGenerationByNameQuery(generation, {
+    skip: generation && false,
+  });
+
+  const {
+    data: pokemonQueryData,
+    error: pokemonQueryError,
+    isLoading: pokemonQueryLoading,
+    isSuccess: pokemonQuerySuccess,
+    isFetching: pokemonQueryFetching,
+  } = useGetPokemonsQuery(page, {
+    skip: !generation && false,
+  });
+
   const path = generation ? "pokemon_species" : "results";
 
   useEffect(() => {
-    if (!isFetching && path === "pokemon_species") {
-      setFCount(Math.ceil(data[path].length / 20));
-      setFetchedRecsByGeneration(data[path]);
-    }
-  }, [generation, data, isFetching, path]);
+    setPage(() => 0);
+    setInitialGenerationRender(true);
+  }, [generation]);
 
   useEffect(() => {
-    const limit = 20;
-    const startIdex = (page - 1) * limit;
-    setGenerationPages(fetchedRecsByGeneration.slice(startIdex, page * limit));
-  }, [fetchedRecsByGeneration, page]);
+    if (pokemonQuerySuccess && !pokemonQueryFetching && !generation) {
+      !isFilterClear &&
+        setList((prev) => [
+          ...prev,
+          ...pokemonQueryData.results.map((el) => el.name),
+        ]);
+      isFilterClear && setList(pokemonQueryData.results.map((el) => el.name));
+    } else if (
+      generationQuerySuccess &&
+      !generationQueryFetching &&
+      generation
+    ) {
+      const listSliced = generationQueryData.pokemon_species
+        .map((el) => el.name)
+        .slice(page, page + 3);
+      initialGenerationRender && setList(listSliced.map((el) => el.name));
 
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected + 1;
-    const limit = 20;
-
-    if (generation) {
-      setPage(selectedPage);
-    } else {
-      const offset = limit * selectedPage;
-      setPage(offset);
+      if (
+        !initialGenerationRender &&
+        listSliced.some((el, i) => list.includes(i))
+      ) {
+        setList((prev) => {
+          return [...prev, ...listSliced];
+        });
+      }
     }
+  }, [
+    pokemonQuerySuccess,
+    pokemonQueryFetching,
+    generationQuerySuccess,
+    generationQueryFetching,
+    generation,
+    isFilterClear,
+    initialGenerationRender,
+
+    // setPage,
+  ]);
+
+  const loadMoreHandler = () => {
+    setIsFilterClear(false);
+    setInitialGenerationRender(false);
+
+    setPage((prev) => (prev += 3));
+  };
+
+  const filterHandler = () => {
+    setIsFilterClear(true);
+    setInitialGenerationRender(true);
+    setPage(0);
+    setGeneration(null);
   };
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 pt-8 md:grid-cols-3">
-        <div className="flex justify-between col-span-full">
-          <h3 className="text-lg text-gray-700">Filters</h3>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => setGeneration(null)}
-              className="ml-8 rounded-md  bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm  hover:bg-indigo-700"
-            >
-              Clear Filter
-            </button>
-            <SelectDropdown
-              list={genList}
-              status={genSuccess}
-              selectedValue={generation}
-              setSelectedValue={setGeneration}
-            />
+      <div className="grid grid-cols-2 justify-center gap-4 pt-8 md:grid-cols-3">
+        {(pokemonQueryData || generationQueryData) && (
+          <div className="flex justify-between col-span-full">
+            <h3 className="text-lg text-gray-700">Filters</h3>
+            <div className="flex space-x-4">
+              <button
+                onClick={filterHandler}
+                className="ml-8 rounded-md  bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm  hover:bg-indigo-700"
+              >
+                Clear Filter
+              </button>
+              <SelectDropdown
+                list={genList}
+                status={genSuccess}
+                selectedValue={generation}
+                setSelectedValue={setGeneration}
+              />
+            </div>
           </div>
-        </div>
-        {isLoading && isFetching && <Loader />}
-        {error && <ErrorMessage />}
+        )}
 
-        {isSuccess &&
-          !isFetching &&
-          !generation &&
-          data[path].map((el) => <PokemonCard key={el.name} name={el.name} />)}
-        {isSuccess &&
+        {list?.map((el) => (
+          <PokemonCard key={el} name={el} />
+        ))}
+        {/* {isSuccess &&
           !isFetching &&
           generation &&
           generationPages.map((el) => (
             <PokemonCard key={el.name} name={el.name} />
-          ))}
+          ))} */}
+
+        {(pokemonQueryLoading || generationQueryLoading) &&
+          (pokemonQueryFetching || generationQueryFetching) && (
+            <TailSpin
+              height="80"
+              width="80"
+              color="#4f46e5"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass="justify-center col-span-full"
+              visible={true}
+            />
+          )}
+        {/* {(pokemonQueryError || !generationQueryError) && <ErrorMessage />} */}
       </div>
 
       <div className="text-center mt-9 mb-8">
-        <ReactPaginate
-          containerClassName="isolate inline-flex -space-x-px  shadow-sm "
-          pageLinkClassName="relative inline-flex items-center  border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-          nextClassName="relative rounded-tr-lg rounded-br-lg inline-flex items-center  border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-          previousClassName="relative rounded-tl-lg rounded-bl-lg inline-flex items-center  border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-          breakClassName="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700"
-          breakLabel="..."
-          nextLabel={<ChevronRightIcon />}
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={Math.ceil(data?.count / 20) || fCount || 1}
-          previousLabel={<CheveronLeftIcon />}
-          activeLinkClassName="text-white bg-amber-300"
-          renderOnZeroPageCount={null}
-        />
+        {(pokemonQueryData || generationQueryData) && (
+          <button
+            onClick={loadMoreHandler}
+            className="relative py-3 px-5 w-36  rounded-lg font-medium bg-amber-400 hover:bg-amber-400"
+          >
+            {pokemonQueryFetching || generationQueryFetching ? (
+              <TailSpin
+                height="25"
+                width="25"
+                color="#4f46e5"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass="justify-center"
+                visible={true}
+              />
+            ) : (
+              "Load More"
+            )}
+          </button>
+        )}
       </div>
     </>
   );

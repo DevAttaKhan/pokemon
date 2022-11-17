@@ -1,20 +1,150 @@
-  if (!isFavorite) {
-      if (favorites) {
-        const parsedFavs = JSON.parse(favorites);
-        if (parsedFavs.fav.includes(name)) return;
-        parsedFavs.fav = [...parsedFavs.fav, name];
-        setIsFavorite(parsedFavs.fav.includes(name));
-        localStorage.setItem("favorites", JSON.stringify(parsedFavs));
-      } else {
-        const obj = {
-          fav: [name],
-        };
-        localStorage.setItem("favorites", JSON.stringify(obj));
-      }
-    } else {
-      const parsedFavs = JSON.parse(favorites);
-      setUserFavs(parsedFavs.fav);
-      setIsFavorite(parsedFavs.fav.includes(name));
-      // setIsRemoved(name);
-      localStorage.setItem("favorites", JSON.stringify(parsedFavs));
+import React, { useState, useEffect } from "react";
+import { TailSpin } from "react-loader-spinner";
+import PokemonCard from "./PokemonCard";
+import ReactPaginate from "react-paginate";
+import {
+  useGetPokemonsQuery,
+  useGetPokemonGenerationByNameQuery,
+  useGetPokemonGenerationsQuery,
+} from "../Services/pokemon";
+import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
+import SelectDropdown from "./SelectDropdown";
+
+const PokemonGrid = () => {
+  const [generation, setGeneration] = useState(null);
+  const [fetchedRecsByGeneration, setFetchedRecsByGeneration] = useState([]);
+  const [generationPages, setGenerationPages] = useState([]);
+  const [fCount, setFCount] = useState(1);
+  const [page, setPage] = useState(0);
+  const [list, setList] = useState([]);
+
+  const { data: genList, isSuccess: genSuccess } =
+    useGetPokemonGenerationsQuery();
+
+  // const { data, error, isLoading, isSuccess, isFetching } = (
+  //   generation ? useGetPokemonGenerationByNameQuery : useGetPokemonsQuery
+  // )(generation ? generation : page);
+
+  const {
+    data: generationQueryData,
+    error: generationQueryError,
+    isLoading: generationQueryLoading,
+    isSuccess: generationQuerySuccess,
+    isFetching: generationQueryFetching,
+  } = useGetPokemonGenerationByNameQuery(generation, {
+    skip: generation && true,
+  });
+
+  const {
+    data: pokemonQueryData,
+    error: pokemonQueryError,
+    isLoading: pokemonQueryLoading,
+    isSuccess: pokemonQuerySuccess,
+    isFetching: pokemonQueryFetching,
+  } = useGetPokemonsQuery(page, {
+    skip: !generation && true,
+  });
+
+  const path = generation ? "pokemon_species" : "results";
+
+  useEffect(() => {
+    setPage(() => 0);
+    setList([]);
+  }, [generation]);
+
+  useEffect(() => {
+    if (isSuccess && !isFetching && !generation) {
+      setList((prev) => [...prev, ...data[path]]);
+    } else if (generation && isSuccess && !isFetching) {
+      const listSliced = data[path].slice(page, page + 9);
+
+      setList((prev) => [...prev, ...listSliced]);
     }
+  }, [isSuccess, isFetching, page]);
+
+  useEffect(() => {
+    const limit = 20;
+    const startIdex = (page - 1) * limit;
+    setGenerationPages(fetchedRecsByGeneration.slice(startIdex, page * limit));
+  }, [fetchedRecsByGeneration, page]);
+
+  const loadMoreHandler = () => {
+    setPage((prev) => (prev += 9));
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-2 justify-center gap-4 pt-8 md:grid-cols-3">
+        {data && (
+          <div className="flex justify-between col-span-full">
+            <h3 className="text-lg text-gray-700">Filters</h3>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setGeneration(() => null)}
+                className="ml-8 rounded-md  bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm  hover:bg-indigo-700"
+              >
+                Clear Filter
+              </button>
+              <SelectDropdown
+                list={genList}
+                status={genSuccess}
+                selectedValue={generation}
+                setSelectedValue={setGeneration}
+              />
+            </div>
+          </div>
+        )}
+
+        {list?.map((el) => (
+          <PokemonCard key={el.name} name={el.name} />
+        ))}
+        {/* {isSuccess &&
+          !isFetching &&
+          generation &&
+          generationPages.map((el) => (
+            <PokemonCard key={el.name} name={el.name} />
+          ))} */}
+
+        {isLoading && isFetching && (
+          <TailSpin
+            height="80"
+            width="80"
+            color="#4f46e5"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{}}
+            wrapperClass="justify-center col-span-full"
+            visible={true}
+          />
+        )}
+        {error && <ErrorMessage />}
+      </div>
+
+      <div className="text-center mt-9 mb-8">
+        {data && (
+          <button
+            onClick={loadMoreHandler}
+            className="relative py-3 px-5 w-36  rounded-lg font-medium bg-amber-400 hover:bg-amber-400"
+          >
+            {isFetching ? (
+              <TailSpin
+                height="25"
+                width="25"
+                color="#4f46e5"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass="justify-center"
+                visible={true}
+              />
+            ) : (
+              "Load More"
+            )}
+          </button>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default PokemonGrid;

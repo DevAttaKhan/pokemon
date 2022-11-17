@@ -52,7 +52,7 @@ const PokemonCard = ({ name, setIsRemoved }) => {
 
   return (
     <>
-      {isLoading && <Skeleton count={5} />}
+      {isLoading && <Skeleton count={25} />}
       {error && (
         <div className=" rounded-lg shadow bg-white">
           <img src={ErrorMessage} alt="error" className="w-full h-full" />
