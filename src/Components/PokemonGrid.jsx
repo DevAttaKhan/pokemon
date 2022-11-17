@@ -34,7 +34,7 @@ const PokemonGrid = () => {
     isSuccess: generationQuerySuccess,
     isFetching: generationQueryFetching,
   } = useGetPokemonGenerationByNameQuery(generation, {
-    skip: generation && false,
+    skip: !generation,
   });
 
   const {
@@ -97,12 +97,6 @@ const PokemonGrid = () => {
     setIsFilterClear(false);
     setInitialGenerationRender(false);
     setPage((prev) => (prev += 9));
-    console.log(
-      initialGenerationRender,
-      "initialrender",
-      isFilterClear,
-      "isfiltercleaer"
-    );
   };
 
   const filterHandler = () => {
