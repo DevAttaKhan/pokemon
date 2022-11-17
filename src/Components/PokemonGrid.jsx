@@ -120,12 +120,14 @@ const PokemonGrid = () => {
           <div className="flex justify-between col-span-full">
             <h3 className="text-lg text-gray-700">Filters</h3>
             <div className="flex space-x-4">
-              <button
-                onClick={filterHandler}
-                className="ml-8 rounded-md  bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm  hover:bg-indigo-700"
-              >
-                Clear Filter
-              </button>
+              {generation && (
+                <button
+                  onClick={filterHandler}
+                  className="ml-8 rounded-md  bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm  hover:bg-indigo-700"
+                >
+                  Clear Filter
+                </button>
+              )}
               <SelectDropdown
                 list={genList}
                 status={genSuccess}
