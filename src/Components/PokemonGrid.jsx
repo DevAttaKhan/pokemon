@@ -77,7 +77,7 @@ const PokemonGrid = () => {
     if (generationQuerySuccess && !generationQueryFetching && generation) {
       const listSliced = generationQueryData.pokemon_species
         .map((el) => el.name)
-        .slice(page, page + 3);
+        .slice(page, page + 9);
       const more = [...list];
       initialGenerationRender && setList(listSliced);
 
@@ -96,7 +96,7 @@ const PokemonGrid = () => {
   const loadMoreHandler = () => {
     setIsFilterClear(false);
     setInitialGenerationRender(false);
-    setPage((prev) => (prev += 3));
+    setPage((prev) => (prev += 9));
     console.log(
       initialGenerationRender,
       "initialrender",

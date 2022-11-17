@@ -9,7 +9,7 @@ export const pokemonApi = createApi({
       query: (page) => {
         return page > 0
           ? `pokemon/?offset=${page}&limit=3`
-          : "pokemon/?offset=0&limit=3`";
+          : "pokemon/?offset=0&limit=9`";
       },
       keepUnusedDataFor: 1,
     }),
