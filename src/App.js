@@ -13,7 +13,7 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route path="/compare" element={<ComparePokemonPage />} />
         <Route path="/favorites" element={<FavoritesPokemonPage />} />
-        <Route path="/details/:id" element={<DetailsPage />} />
+        <Route path="/details/:name" element={<DetailsPage />} />
       </Route>
     </Routes>
   );

@@ -1,33 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { useGetPokemonBySpeciesQuery } from "../Services/pokemon";
+import { useLocation, useParams } from "react-router-dom";
+import {
+  useGetPokemonBySpeciesQuery,
+  useGetPokemonByNameQuery,
+} from "../Services/pokemon";
 import { toKilograms, toCentimeters } from "../utils";
 import PokemonRenderDetails from "../Components/PokemonRenderDetails";
 import Loader from "../Components/Loader/Loader";
 import errormsg from "../Assets/media/somethi-went-wrong.svg";
 const DetailsPage = () => {
+  const { name } = useParams();
   const [pokemonDetails, setPokemoeDetails] = useState();
-  const { state } = useLocation();
+  // const { state } = useLocation();
   const { data, error, isSuccess, isLoading, isFetching } =
-    useGetPokemonBySpeciesQuery(state.name);
+    useGetPokemonBySpeciesQuery(name);
+
+  const {
+    data: state,
+    isFetching: stateIsFetching,
+    error: stateError,
+  } = useGetPokemonByNameQuery(name);
 
   useEffect(() => {
     if (!isFetching && data) {
       const pokemonDetailsCopy = {
-        img: state.sprites.front_shiny,
-        name: state.name,
-        types: state.types.map((el) => el.type.name),
-        generation: data.generation.name,
-        "egg groups": data.egg_groups.map((el) => el.name),
-        color: data.color.name,
-        "base experience": state.base_experience,
-        "growth rate": data.growth_rate.name,
-        habitat: data.habitat.name,
-        shape: data.shape.name,
-        weight: `${toKilograms(state.weight)} Kg`,
-        height: `${toCentimeters(state.height)} Cm`,
-        abilities: state.abilities.map((el) => el.ability.name),
-        moves: state.moves.map((el) => el.move.name),
+        img: state?.sprites?.front_shiny,
+        name: state?.name,
+        types: state?.types?.map((el) => el.type.name),
+        generation: data?.generation?.name,
+        "egg groups": data?.egg_groups.map((el) => el.name),
+        color: data?.color.name,
+        "base experience": state?.base_experience,
+        "growth rate": data?.growth_rate.name,
+        habitat: data?.habitat.name,
+        shape: data?.shape.name,
+        weight: `${toKilograms(state?.weight)} Kg`,
+        height: `${toCentimeters(state?.height)} Cm`,
+        abilities: state?.abilities.map((el) => el.ability.name),
+        moves: state?.moves.map((el) => el.move.name),
       };
       setPokemoeDetails(pokemonDetailsCopy);
     }
@@ -36,9 +46,11 @@ const DetailsPage = () => {
   return (
     <>
       <div className="details container mx-auto flex flex-col items-center py-11">
-        {isLoading && <Loader />}
+        {isLoading && (stateIsFetching || isFetching) && <Loader />}
         {error && <img src={errormsg} alt="error message" />}
-        {isSuccess && <PokemonRenderDetails {...pokemonDetails} />}
+        {!(stateIsFetching || isFetching) && isSuccess && (
+          <PokemonRenderDetails {...pokemonDetails} />
+        )}
       </div>
     </>
   );

@@ -6,6 +6,7 @@ import {
   useGetPokemonsQuery,
   useGetPokemonGenerationByNameQuery,
   useGetPokemonGenerationsQuery,
+  useLazyGetPokemonGenerationByNameQuery,
 } from "../Services/pokemon";
 import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
 import SelectDropdown from "./SelectDropdown";
@@ -61,24 +62,6 @@ const PokemonGrid = () => {
           ...pokemonQueryData.results.map((el) => el.name),
         ]);
       isFilterClear && setList(pokemonQueryData.results.map((el) => el.name));
-    } else if (
-      generationQuerySuccess &&
-      !generationQueryFetching &&
-      generation
-    ) {
-      const listSliced = generationQueryData.pokemon_species
-        .map((el) => el.name)
-        .slice(page, page + 3);
-      initialGenerationRender && setList(listSliced.map((el) => el.name));
-
-      if (
-        !initialGenerationRender &&
-        listSliced.some((el, i) => list.includes(i))
-      ) {
-        setList((prev) => {
-          return [...prev, ...listSliced];
-        });
-      }
     }
   }, [
     pokemonQuerySuccess,
@@ -88,20 +71,44 @@ const PokemonGrid = () => {
     generation,
     isFilterClear,
     initialGenerationRender,
+  ]);
 
-    // setPage,
+  useEffect(() => {
+    if (generationQuerySuccess && !generationQueryFetching && generation) {
+      const listSliced = generationQueryData.pokemon_species
+        .map((el) => el.name)
+        .slice(page, page + 3);
+      const more = [...list];
+      initialGenerationRender && setList(listSliced);
+
+      if (!initialGenerationRender) {
+        setList(more.concat(listSliced));
+      }
+    }
+  }, [
+    generationQuerySuccess,
+    generationQueryFetching,
+    generation,
+    initialGenerationRender,
+    page,
   ]);
 
   const loadMoreHandler = () => {
     setIsFilterClear(false);
     setInitialGenerationRender(false);
-
     setPage((prev) => (prev += 3));
+    console.log(
+      initialGenerationRender,
+      "initialrender",
+      isFilterClear,
+      "isfiltercleaer"
+    );
   };
 
   const filterHandler = () => {
     setIsFilterClear(true);
     setInitialGenerationRender(true);
+
     setPage(0);
     setGeneration(null);
   };
@@ -152,7 +159,8 @@ const PokemonGrid = () => {
               visible={true}
             />
           )}
-        {/* {(pokemonQueryError || !generationQueryError) && <ErrorMessage />} */}
+        {pokemonQueryError && !generationQueryError && <ErrorMessage />}
+        {!generationQueryError && generationQueryError && <ErrorMessage />}
       </div>
 
       <div className="text-center mt-9 mb-8">

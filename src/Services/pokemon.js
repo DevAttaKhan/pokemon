@@ -11,6 +11,7 @@ export const pokemonApi = createApi({
           ? `pokemon/?offset=${page}&limit=3`
           : "pokemon/?offset=0&limit=3`";
       },
+      keepUnusedDataFor: 1,
     }),
     getPokemonByName: builder.query({
       query: (name) => `pokemon/${name}`,
@@ -34,4 +35,5 @@ export const {
   useGetPokemonBySpeciesQuery,
   useGetPokemonGenerationsQuery,
   useGetPokemonGenerationByNameQuery,
+  useLazyGetPokemonGenerationByNameQuery,
 } = pokemonApi;
