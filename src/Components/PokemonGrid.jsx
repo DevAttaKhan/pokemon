@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { TailSpin } from "react-loader-spinner";
 import PokemonCard from "./PokemonCard";
-import ReactPaginate from "react-paginate";
 import {
   useGetPokemonsQuery,
   useGetPokemonGenerationByNameQuery,
   useGetPokemonGenerationsQuery,
-  useLazyGetPokemonGenerationByNameQuery,
 } from "../Services/pokemon";
 import { ReactComponent as ErrorMessage } from "../Assets/media/somethi-went-wrong.svg";
 import SelectDropdown from "./SelectDropdown";
 
 const PokemonGrid = () => {
-  // const isFilterClear = useRef(false);
   const [generation, setGeneration] = useState(null);
-  const [fetchedRecsByGeneration, setFetchedRecsByGeneration] = useState([]);
   const [initialGenerationRender, setInitialGenerationRender] = useState(true);
   const [isFilterClear, setIsFilterClear] = useState(false);
   const [page, setPage] = useState(0);
@@ -47,8 +43,6 @@ const PokemonGrid = () => {
     skip: !generation && false,
   });
 
-  const path = generation ? "pokemon_species" : "results";
-
   useEffect(() => {
     setPage(() => 0);
     setInitialGenerationRender(true);
@@ -64,6 +58,7 @@ const PokemonGrid = () => {
       isFilterClear && setList(pokemonQueryData.results.map((el) => el.name));
     }
   }, [
+    pokemonQueryData,
     pokemonQuerySuccess,
     pokemonQueryFetching,
     generationQuerySuccess,
@@ -85,7 +80,9 @@ const PokemonGrid = () => {
         setList(more.concat(listSliced));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    generationQueryData,
     generationQuerySuccess,
     generationQueryFetching,
     generation,

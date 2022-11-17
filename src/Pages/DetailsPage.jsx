@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   useGetPokemonBySpeciesQuery,
   useGetPokemonByNameQuery,
@@ -11,7 +11,6 @@ import errormsg from "../Assets/media/somethi-went-wrong.svg";
 const DetailsPage = () => {
   const { name } = useParams();
   const [pokemonDetails, setPokemoeDetails] = useState();
-  // const { state } = useLocation();
   const { data, error, isSuccess, isLoading, isFetching } =
     useGetPokemonBySpeciesQuery(name);
 
@@ -47,7 +46,7 @@ const DetailsPage = () => {
     <>
       <div className="details container mx-auto flex flex-col items-center py-11">
         {isLoading && (stateIsFetching || isFetching) && <Loader />}
-        {error && <img src={errormsg} alt="error message" />}
+        {(error || stateError) && <img src={errormsg} alt="error message" />}
         {!(stateIsFetching || isFetching) && isSuccess && (
           <PokemonRenderDetails {...pokemonDetails} />
         )}
