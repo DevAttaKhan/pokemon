@@ -31,7 +31,7 @@ const DetailsPage = () => {
         color: data?.color.name,
         "base experience": state?.base_experience,
         "growth rate": data?.growth_rate.name,
-        habitat: data?.habitat.name,
+        habitat: data?.habitat?.name,
         shape: data?.shape.name,
         weight: `${toKilograms(state?.weight)} Kg`,
         height: `${toCentimeters(state?.height)} Cm`,

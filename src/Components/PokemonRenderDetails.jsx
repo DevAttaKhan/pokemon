@@ -5,7 +5,9 @@ const RenderRow = ({ row }) => {
   return (
     <div className="flex justify-between gap-x-11 py-3 border-b">
       <span className="text-right flex-1 ">{key}</span>
-      <span className=" flex-1">{value}</span>
+      <span className=" flex-1">
+        {value ? value : "No " + key + " available"}
+      </span>
     </div>
   );
 };
